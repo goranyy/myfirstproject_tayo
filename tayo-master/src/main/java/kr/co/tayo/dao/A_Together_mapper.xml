@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.A_TogetherDAO">
+
+	<select id="A_Togetherlist" resultType="kr.co.tayo.dto.A_TogetherDTO">
+		select s.se_secret,t.num,t.title,t.cnt,t.to_date,t.mem_id from total t left outer join secret s on t.num = s.num where bo_num =4 ORDER BY t.num DESC limit 10 offset #{param1}
+	</select>
+
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(num) FROM total where bo_num=4
+	</select>
+
+	<select id="A_Togethersearch" resultType="kr.co.tayo.dto.A_TogetherDTO"
+		parameterType="hashmap">
+		select s.se_secret,t.num,t.title,t.cnt,t.to_date,t.mem_id from total t left outer join secret s on t.num = s.num where bo_num=4 and (title like concat('%',#{title},'%') or t.mem_id like concat('%',#{mem_id},'%')) ORDER BY t.num DESC
+	</select>
+	
+	<delete id="A_Togetherdel"> 
+		DELETE FROM total where num=#{param1}
+	</delete>
+	
+<!-- 	<select id="A_Togetherdetail" resultType="kr.co.tayo.dto.A_TogetherDTO"
+		parameterType="String">
+		SELECT * FROM total WHERE num=#{num}
+	</select> -->
+	
+	<update id="upHit" parameterType="String">
+		UPDATE total SET cnt=cnt+1
+		WHERE num=#{num}
+	</update>
+	
+	 <delete id="A_Togetherdelete">
+		DELETE FROM total where num=#{param1}
+	</delete> 
+
+
+</mapper>

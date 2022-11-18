@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.TripDAO">
+<select id="Tirplist" resultType="kr.co.tayo.dto.TripDTO">
+	SELECT * FROM Trip order by tr_num DESC limit 10 offset #{param1}	
+</select>
+
+<select id="totalCount" resultType="int">
+		SELECT COUNT(tr_num) FROM Trip
+</select>
+
+<delete id="delete" parameterType="String">
+	DELETE FROM hash WHERE tr_num=#{tr_num}
+</delete>
+</mapper>

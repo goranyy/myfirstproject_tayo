@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.A_NoticeDAO">
+	<select id="list" resultType="kr.co.tayo.dto.A_NoticeDTO" >
+		SELECT * FROM total where bo_num=3 ORDER BY num DESC limit 10 offset #{param1} 
+	</select>
+	
+	<select id="totalCount" resultType="int">
+      SELECT COUNT(num) FROM total where bo_num=3
+   	</select>
+   	
+   	 <select id="totalCount2" resultType="int" parameterType="hashmap">
+		SELECT COUNT(num) FROM total where (title like concat('%', #{title}, '%')) and bo_num = 3 ORDER BY num desc;
+	</select>
+	
+	<select id="totalCount3" resultType="int" parameterType="hashmap">
+		SELECT COUNT(num) FROM total where (mem_id like concat('%', #{mem_id}, '%')) and bo_num = 3 ORDER BY num desc;
+	</select> 
+   	
+   	<select id="detail" parameterType="String" resultType="kr.co.tayo.dto.A_NoticeDTO">
+		select * from total where num = #{num}
+	</select>
+	
+	<update id="upHit" parameterType="String">
+		update total set cnt = cnt+1 where num = #{num}
+	</update>
+	
+	<insert id="write" useGeneratedKeys="true" keyColumn="num" keyProperty="num" parameterType="hashmap">
+		insert into total(title,content, bo_num,mem_id)
+			values(#{title},#{content}, 3,#{mem_id})
+	</insert>
+	
+	<insert id="fileWrite">
+		insert into file (num, oriFileName, newFileName) values (#{param1},#{param2},#{param3}) 
+	</insert>
+	
+	<select id="fileList" parameterType="String" resultType="kr.co.tayo.dto.PhotoDTO">
+		select *from file where num = #{num} order by fi_num
+	</select>
+	
+	<update id="update" parameterType="hashmap">
+		update total set title = #{title}, content = #{content} where num = #{num}
+	</update>
+	
+	<delete id="delete" parameterType="String">
+		delete from total where num = #{num}
+	</delete>
+	
+	<select id = "search"  resultType="kr.co.tayo.dto.A_NoticeDTO" parameterType="hashmap">
+      select num,title, mem_id,cnt, to_date from total 
+   		where bo_num = 3 and (title like concat('%', #{title}, '%') or mem_id like concat('%', #{mem_id}, '%')) ORDER BY num desc;
+   	</select>
+   	
+   	
+
+
+</mapper>

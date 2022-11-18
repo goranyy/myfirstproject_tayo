@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.QnaDAO">
+
+<!-- 	<select id="list" resultType="kr.co.tayo.dto.QnaDTO">
+		SELECT num,title,mem_id,cnt,to_date FROM total where bo_num=2
+	</select> -->
+	
+	<select id = "list" resultType="kr.co.tayo.dto.QnaDTO">
+		SELECT t.num, t.title, t.mem_id, t.to_date, s.se_secret,t.cnt
+  			FROM total AS t
+  			LEFT OUTER JOIN secret AS s
+    		ON t.num = s.num where t.bo_num=2 order by num DESC limit 10 offset #{param1};
+	</select>
+	
+		<select id="totalCount" resultType="int">
+		SELECT COUNT(num) FROM total where bo_num=2
+	</select>
+	
+	<insert id="write" 
+ 		useGeneratedKeys="true"
+ 		keyColumn="num"
+ 		keyProperty="num"
+ 		parameterType="hashmap">
+ 		insert into total(title, mem_id, content,bo_num)
+ 			values(#{title},#{mem_id},#{content},2)
+ 	</insert>
+ 	
+ 	<insert id="fileWrite" >
+ 		insert into file(num,oriFileName,newFileName)
+			values(#{param1},#{param2},#{param3})
+ 	</insert>
+	
+	<select id="detail" resultType="kr.co.tayo.dto.QnaDTO" parameterType="String">
+		SELECT t.*, s.se_secret FROM total t left outer join secret s on t.num = s.num where t.num=#{param1};
+	</select>
+	
+	 <select id="fileList" parameterType="String"
+ 	resultType="kr.co.tayo.dto.QnaPhotoDTO">
+ 	select * from file where num = #{num}
+ 		order by fi_num
+ 	</select>
+	
+	<update id="upHit" parameterType="String">
+		UPDATE total SET cnt=cnt+1
+			WHERE num=#{num}
+	</update>
+	
+	<update id="update" parameterType="hashmap">
+		UPDATE total SET
+			title=#{title}
+			,content=#{content}
+		WHERE num=#{num}
+	</update>
+	
+		<delete id="delete" parameterType="String">
+		DELETE FROM total WHERE num = #{num}
+	</delete>
+	
+		<select id = "search"  resultType="kr.co.tayo.dto.QnaDTO" parameterType="hashmap">
+		select * from total 
+	where bo_num =2 and (title like concat('%', #{title}, '%') or mem_id like concat('%', #{mem_id}, '%'));
+	</select>
+	
+	<insert id="replyWrite">
+		insert into reply(re_coment,mem_id,bo_num,num)
+			values(#{param1},(select mem_id from member where mem_id=#{param2})
+			,5
+			,(select num from Total where num=#{param3}))
+	</insert>
+	
+	<select id="replylist" resultType="kr.co.tayo.dto.TogetherReplyDTO">
+		SELECT re_num, re_coment, mem_id, re_date FROM reply WHERE num=#{param1} order by re_num DESC limit 10 offset #{param2};
+	</select>
+	
+	<delete id="replyDelete">
+		DELETE FROM reply WHERE re_num=#{param1}
+	</delete>
+	
+	<update id="replyUpdate">
+		UPDATE reply SET re_coment=#{param2} WHERE re_num = #{param1} AND mem_id=#{param3}
+	</update>
+	
+	<select id="reTotalCount" resultType="int">
+      SELECT COUNT(re_num) FROM reply WHERE num=#{pram1};
+   	</select>
+	
+	<update id="bctUp" parameterType="String">
+   		update member set mem_bcnt = mem_bcnt+1 where mem_id = #{writer};
+   	</update>
+   	
+   	<update id="bctMin" parameterType="String">
+   		update member set mem_bcnt = mem_bcnt-1 where mem_id = #{writer};
+   	</update>
+   	
+   	<update id="detailSecretCancel">
+   		update secret set se_secret = '무', mem_id = #{param2} where num = #{param1};
+   	</update>
+   	
+   	<insert id="detailSecretInsert">
+   		insert into secret(se_secret, mem_id, num)
+			values('유', #{param2}, #{param1});
+   	</insert>
+   	
+   	<update id="detailSecretUpdate">
+   		update secret set se_secret = '유', mem_id = #{param2} where num = #{param1};
+   	</update>
+	
+</mapper>

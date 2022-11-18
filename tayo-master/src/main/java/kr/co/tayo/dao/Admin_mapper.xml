@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.AdminDAO">
+
+<select id="list" resultType="hashmap" parameterType="int">
+	SELECT mem_id,mem_pw,mem_email,mem_pnum,mem_name,mem_age,mem_add FROM member order by mem_id DESC limit 10 offset #{param1}	
+</select>
+
+<select id="totalCount" resultType="int">
+		SELECT COUNT(mem_id) FROM member
+</select>
+
+<select id="MemberListsearch" resultType="kr.co.tayo.dto.AdminDTO">
+	select mem_id,mem_pw,mem_email,mem_pnum,mem_name,mem_age,mem_add,mem_power FROM member  where (mem_id like concat('%',#{mem_id},'%')) and mem_power=#{mem_power} 
+</select>
+
+<delete id="delete" parameterType="String">
+	DELETE FROM hash WHERE mem_id=#{mem_id}
+</delete>
+
+<!-- <select id="Memberdetail" resultType="kr.co.tayo.dto.AdminDTO">
+select mem_id,mem_pw,mem_email,mem_pnum,mem_name,mem_age,mem_add,mem_power FROM member  where mem_id=#{mem_id}
+
+</select> -->
+
+<select id="totalCount2" resultType="int" parameterType="hashmap">
+		SELECT COUNT(mem_id) FROM member where (mem_id like concat('%',#{mem_id},'%')) and mem_power=#{mem_power}
+</select>
+<!-- <select id="totalCount3" resultType="int" parameterType="hashmap">
+		SELECT COUNT(mem_id) FROM hash where (mem_power like concat('%',#{mem_power},'%'))
+</select>  -->
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.RentDAO">
+<select id="Rentlist" resultType="kr.co.tayo.dto.RentDTO">
+	select * from rent order by ren_num DESC limit 10 offset #{param1}
+</select>
+<select id="totalCount" resultType="int">
+	select COUNT(ren_num) from rent
+</select>
+<delete id="delete" parameterType="String">
+	delete from rent where ren_num=#{ren_num}
+</delete>
+</mapper>

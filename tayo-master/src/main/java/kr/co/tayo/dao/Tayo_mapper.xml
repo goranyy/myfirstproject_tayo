@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+
+
+<mapper namespace="kr.co.tayo.dao.AdminCarDAO">
+
+	<!-- 리스트 호출 -->
+	<!-- <select id="carList" resultType="hashmap">
+		SELECT ca_num, ca_name, ca_price, ca_fuel FROM car 
+			ORDER BY ca_num DESC limit 10 offset #{param1}
+	</select>
+		 -->
+ 	<!-- 차량 목록 -->
+ 	<select id="carList"  resultType="kr.co.tayo.dto.CarPopulListDTO">
+ 		select f.fi_num, f.oriFileName, f.newFileName, c.*
+			from file f, car c where f.ca_num is not null and c.ca_num = f.ca_num order by c.ca_num
+ 	</select>
+ 	
+	<!-- car에 저장된 전체 데이터 수 -->
+	<select id="totalCount" resultType="int">
+		SELECT COUNT(ca_num) FROM car
+	</select>
+
+	<!-- 차량정보 등록 -->
+	<insert id="carPut" useGeneratedKeys="true" keyColumn="ca_num" keyProperty="ca_num" parameterType="kr.co.tayo.dto.CarDTO">
+		INSERT INTO car (ca_name, ca_model, ca_brand, ca_price, ca_fuel, ca_age)
+			VALUES (#{ca_name}, #{ca_model}, #{ca_brand}, #{ca_price}, #{ca_fuel}, #{ca_age}) 
+	</insert>
+	
+	<!-- 차량사진 등록 -->
+	<insert id="carFilePut">
+		INSERT INTO File (oriFileName, newFileName, ca_num) 
+			VALUES (#{param2}, #{param3}, #{param1} )
+	</insert>
+	
+	<!-- 상세보기_글 -->
+	<select id="carDetail" parameterType="String" resultType="kr.co.tayo.dto.CarDTO">
+		SELECT * FROM car WHERE ca_num=#{value}
+	</select>
+	
+	<!-- 상세보기_사진 -->
+	<select id="fileList" parameterType="String"  resultType="kr.co.tayo.dto.FileDTO">
+		SELECT * FROM File WHERE ca_num= (SELECT ca_num FROM car WHERE ca_num=#{value})
+				 ORDER BY fi_num
+	</select>
+	
+	<!-- 수정하기 -->
+	<update id="update" parameterType="hashmap">
+		UPDATE car SET 
+			ca_name = #{ca_name},
+			ca_model = #{ca_model},
+			ca_brand = #{ca_brand},
+			ca_fuel = #{ca_fuel},
+			ca_age = #{ca_age}	WHERE ca_num = #{ca_num}
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="delete">
+		DELETE FROM car WHERE ca_num=#{param1}
+	</delete>
+	
+	<!-- 리스트 검색 -->
+	<select id="search" parameterType="String" resultType="kr.co.tayo.dto.CarDTO">
+		SELECT ca_num, ca_name, ca_price, ca_fuel FROM car 
+			WHERE ca_name LIKE concat('%', #{keyword}, '%')
+			ORDER BY ca_num DESC 
+	</select>
+	
+
+	<!-- 사용자 -->
+	<!-- 리스트 호출 -->
+	<select id="carlist" resultType="kr.co.tayo.dto.CarDTO">
+		<!--  이름, 가격, 해당 카번호 사진(File) -->
+		SELECT * FROM car 
+	</select>
+	 <!-- 사진 리스트 호출 -->
+	 <select id="imgList" parameterType="String" resultType="kr.co.tayo.dto.FileDTO">
+		SELECT * FROM File WHERE ca_num= (SELECT ca_num FROM car WHERE ca_num=#{ca_num})
+	</select>
+	
+	<!-- 찜한 여부 확인 
+	<select id="jjimChk" parameterType="String" resultType="int">
+		SELECT EXISTS (SELECT ca_num FROM jjim WHERE ca_num=#{ca_num} limit 1) AS RESULT
+	</select>
+	-->
+	
+	<!-- 해당아이디 찜여부 판단 -->
+	<select id="jjimChk_loginId" parameterType="hashmap" resultType="int">
+		SELECT EXISTS (SELECT mem_id FROM jjim WHERE mem_id=#{loginId} AND ca_num=#{ca_num}) AS result
+	</select>
+	 
+	<!-- 찜하기 -->
+	<insert id="jjimSet" parameterType="hashmap">		
+		INSERT INTO Jjim (ca_num, mem_id)  
+			SELECT #{ca_num}, #{loginId}
+			FROM DUAL WHERE EXISTS(SELECT * FROM member WHERE mem_id = #{loginId})
+	</insert>
+	
+	<!-- 찜목록 삭제 -->
+	<delete id="jjimDel" parameterType="String">
+		DELETE FROM Jjim WHERE ca_num=#{param1}
+	</delete>
+	
+	<!-- 조회수 증가 -->
+	<update id="upHit" parameterType="String">
+		UPDATE car SET ca_cnt = ca_cnt+1 WHERE ca_num=#{ca_num}
+	</update>
+	
+	<!-- 마이페이지>찜목록 -->
+	<select id="myPage_jjim" parameterType="String" resultType="hashmap">
+		SELECT c.* 
+			FROM (SELECT * FROM jjim WHERE mem_id=#{mem_id} AND ca_num IS NOT NULL) j, (SELECT * FROM car) c
+			WHERE j.ca_num = c.ca_num
+	</select>
+	
+	<!-- 마이페이지>찜목록 파일 -->
+	<select id="jjimFile" parameterType="String" resultType="kr.co.tayo.dto.FileDTO">
+		SELECT f.* 
+			FROM (SELECT * FROM jjim WHERE mem_id=#{mem_id} AND ca_num IS NOT NULL) j, (SELECT * FROM file) f
+			WHERE j.ca_num = f.ca_num
+	</select>
+	
+	<!-- 인기차 목록 -->
+	<select id="carPopulList" resultType="kr.co.tayo.dto.CarPopulListDTO">
+		<!--  이름, 가격, 해당 카번호 사진(File) -->
+		select f.fi_num, f.oriFileName, f.newFileName, c.*
+			from file f, car c where f.ca_num is not null and c.ca_num = f.ca_num order by c.ca_cnt desc
+	</select>
+	
+	<!-- 메인 해시태그 -->
+	<select id="mainListCall" resultType="kr.co.tayo.dto.mainListDTO">
+		select c.*, h.ha_num, h.ha_name, h.ha_value 
+			from hash h, car c where c.ca_num is not null and c.ca_num = h.ca_num 
+			order by rand() limit 100
+	</select>
+	
+	<!-- 해시태그>차량목록 -->
+	<select id="hashFile" parameterType="String" resultType="kr.co.tayo.dto.hashFileDTO">
+		select distinct f.newFileName from file f, hash h where f.ca_num = (select distinct h.ca_num where h.ha_value = #{ha_value})
+	</select>
+	
+	 <select id="hashCarList" parameterType="String" resultType="kr.co.tayo.dto.CarDTO">
+		select distinct c.* from car c, hash h where c.ca_num = (select distinct h.ca_num where h.ha_value = #{ha_value})
+	</select>
+	 
+	<!-- 여행지 사진 등록 -->
+<!-- 	<insert id="tripImgPut">
+		INSERT INTO File (oriFileName, newFileName, tr_num) 
+			VALUES (#{param2}, #{param3}, #{param1} )
+	</insert>
+	
+	 -->
+	
+	<!-- 여행지 띄우기 -->
+	<select id="tripInfo" resultType="kr.co.tayo.dto.TripDTO">
+		SELECT f.fi_num , f.oriFileName ,f.newFileName ,t.*
+			FROM file f   
+			JOIN 
+			(
+			  SELECT *  FROM trip 
+			  ORDER BY RAND() LIMIT 3 
+			) AS t ON f.tr_num = t.tr_num
+	</select>
+	
+	<!-- 렌트카 -->
+	<select id="rentCar" resultType="kr.co.tayo.dto.rentCarDTO">
+		SELECT r.* FROM rent r ORDER BY RAND() LIMIT 3
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+

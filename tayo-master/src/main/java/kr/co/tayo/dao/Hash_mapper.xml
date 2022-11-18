@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.HashDAO">
+
+
+
+<!-- <select id="list" resultType="kr.co.tayo.dto.HashDTO">
+	SELECT h.ha_num,c.ca_name, h.ha_name,h.ha_value FROM hash as h inner join car as c on h.ca_num=c.ca_num
+</select> -->
+<insert id="write" parameterType="hashmap">
+	INSERT INTO hash(ca_num,ha_name,ha_value)VALUES((select ca_num from car where ca_name=#{ca_name}),#{ha_name},#{ha_value})
+</insert>
+
+<delete id="delete" parameterType="String">
+	DELETE FROM hash WHERE ha_num=#{ha_num}
+</delete>
+
+<update id="update" parameterType="hashmap">
+	update hash set ha_name=#{ha_name},ha_value=#{ha_value} WHERE ha_num=#{ha_num}
+</update>
+
+<select id="Form" resultType="kr.co.tayo.dto.HashDTO">
+	SELECT h.ha_num,c.ca_name, h.ha_name,h.ha_value FROM hash as h inner join car as c on h.ca_num=c.ca_num where ha_num=#{ha_num}
+</select>
+
+<!--   <select id="search" resultType="kr.co.tayo.dto.HashDTO">
+	select h.ha_num,h.ha_name ,h.ha_value ,c.ca_name  from hash as h inner join car as c on h.ca_num = c.ca_num where h.ha_name=#{ha_name} or c.ca_name=#{ca_name} order by h.ha_num DESC limit 10 page #{page}
+</select>  -->
+
+  <select id="search" resultType="kr.co.tayo.dto.HashDTO">
+	select h.ha_num,h.ha_name ,h.ha_value ,c.ca_name  from hash as h inner join car as c on h.ca_num = c.ca_num where h.ha_name=#{ha_name} or c.ca_name=#{ca_name} order by h.ha_num
+</select>  
+
+
+<!-- <select id="search" resultType="hashmap" parameterType="String">
+	select h.ha_num,h.ha_name ,h.ha_value ,c.ca_name  from hash as h inner join car as c on h.ca_num = c.ca_num where h.ha_name=#{param1} or c.ca_name=#{param2} order by h.ha_num DESC limit 10 offset #{param3}
+</select> -->
+
+<select id="list" resultType="hashmap" parameterType="int">
+	SELECT h.ha_num,c.ca_name, h.ha_name,h.ha_value FROM hash as h inner join car as c on h.ca_num=c.ca_num order by h.ha_num DESC limit 10 offset #{param1}	
+</select>
+
+<select id="totalCount" resultType="int">
+		SELECT COUNT(ha_num) FROM hash
+</select>
+
+<select id="totalCount2" resultType="int" parameterType="hashmap">
+		SELECT COUNT(ha_num) FROM hash where (ha_name like concat('%',#{ha_name},'%'))
+</select>
+<select id="totalCount3" resultType="int" parameterType="hashmap">
+		SELECT COUNT(ca_num) FROM hash where ca_num=(select ca_num from car where ca_name=#{ca_name}) 
+</select> 
+
+</mapper>

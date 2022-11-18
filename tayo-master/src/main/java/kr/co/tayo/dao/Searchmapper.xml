@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.SearchDAO">
+	
+	<select id = "search"  resultType="kr.co.tayo.dto.SearchDTO"  parameterType="hashmap">
+		select distinct f.newFileName ,c.ca_num,c.ca_name,c.ca_price,c.ca_model,c.ca_brand,c.ca_age,c.ca_fuel from 
+			car c inner join rentcar r on c.ca_num = r.ca_num 
+			inner join file f on c.ca_num = f.ca_num 
+			where c.ca_model = #{ca_model} or 
+				(c.ca_price between #{minprice} and #{maxprice} ) or
+				(r.ren_location like concat('%', #{search_loc}, '%'))
+	</select>
+	
+	
+<!-- 	<select id = "search"  resultType="kr.co.tayo.dto.SearchDTO"  parameterType="hashmap">				
+		select distinct c.ca_num,c.ca_name,c.ca_price from 
+			car c inner join rentcar r on c.ca_num = r.ca_num 
+			where c.ca_model = #{ca_model} and 
+				(c.ca_price between #{minprice} and #{maxprice} ) and
+				(r.ren_date between #{startdate} and #{enddate});		
+	</select>
+	
+		<select id = "search"  resultType="kr.co.tayo.dto.QnaPhotoDTO"  parameterType="int">				
+		select  * from file where ca_num=#{ca_num}
+	</select> -->
+
+
+<!-- 		select distinct f.newFileName ,c.ca_num,c.ca_name,c.ca_price from 
+			car c inner join rentcar r on c.ca_num = r.ca_num 
+			inner join file f on c.ca_num = f.ca_num 
+			where c.ca_model = #{ca_model} and 
+				(c.ca_price between #{minprice} and #{maxprice} ) and
+				(r.ren_date between #{startdate} and #{enddate}); -->
+				
+</mapper>

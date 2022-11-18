@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.MypageDAO">
+<select id="mypage" resultType="kr.co.tayo.dto.MypageDTO">
+	SELECT m.mem_id,m.mem_pw,m.mem_pnum,m.mem_email,m.mem_name,m.mem_add,m.mem_detailAdd,m.mem_age,e.mem_mar,e.mem_child,e.mem_mbti,e.mem_fam
+	from member as m inner join memberEvent as e  ON m.mem_id=e.mem_id  where m.mem_id=#{mem_id}
+</select>
+<select id="mypage3" resultType="kr.co.tayo.dto.MypageDTO">
+	SELECT m.mem_id,m.mem_pw,m.mem_pnum,m.mem_email,m.mem_name,m.mem_add,m.mem_detailAdd,m.mem_age from member m where m.mem_id=#{mem_id}
+</select>
+
+<!-- <update id="Mypageupdate" parameterType="String">
+	update(SELECT m.mem_id,m.mem_email,m.mem_pnum,m.mem_add,m.mem_detailAdd,e.mem_mar,e.mem_child,e.mem_fam,e.mem_mbti
+	from member as m inner join memberEvent as e  ON m.mem_id=e.mem_id  where m.mem_id=#{param1})
+	set m.mem_id=#{param1},m.mem_email=#{param2},m.mem_pnum=#{param3},m.mem_add=#{param4},m.mem_detailAdd=#{param5},e.mem_mar=#{param6},e.mem_child=#{param7},e.mem_fam=#{param8},e.mem_mbti=#{param9}
+</update> -->
+<update id="Mypageupdate"  parameterType="String">
+   update member as m set m.mem_email=#{param2},m.mem_pnum=#{param3},m.mem_add=#{param4},m.mem_detailAdd=#{param5} where m.mem_id=#{param1}
+</update>
+<update id="MypageUpdateForm2"  parameterType="String">
+   update memberEvent as e set e.mem_mar=#{param2},e.mem_child=#{param3},e.mem_fam=#{param4},e.mem_mbti=#{param5} where e.mem_id=#{param1}
+   
+</update>
+
+<delete id="remove">
+	DELETE FROM member WHERE mem_id=#{param1}
+</delete>
+
+<select id="AdminMypage" resultType="kr.co.tayo.dto.MypageDTO">
+	SELECT m.mem_id,m.mem_pw,m.mem_pnum,m.mem_email,m.mem_name,m.mem_add,m.mem_detailAdd,m.mem_age from member as m where m.mem_id=#{mem_id}
+</select>
+
+<update id="AdminMypageupdate" parameterType="String">
+	update member as m set m.mem_email=#{param2},m.mem_pnum=#{param3},m.mem_add=#{param4},m.mem_detailAdd=#{param5} where m.mem_id=#{param1}
+</update>
+
+<select id="Memberdetail" resultType="kr.co.tayo.dto.MypageDTO">
+	SELECT m.mem_id,m.mem_pw,m.mem_pnum,m.mem_email,m.mem_name,m.mem_add,m.mem_detailAdd,m.mem_age,m.mem_bcnt,m.mem_power from member m where m.mem_id=#{mem_id}
+</select>
+<update id="Memberdetailupdate" parameterType="String">
+	update member as m set m.mem_power=#{param2} where m.mem_id=#{param1}
+</update>
+<select id="eventId"  parameterType="String"  resultType="String">
+   select * from memberevent where mem_id=#{param1}
+</select>
+
+<insert id="MypageInsert" parameterType="String">
+   insert into memberevent (mem_id, mem_mar, mem_child, mem_mbti, mem_fam)
+         values(#{param1}, #{param2}, #{param3}, #{param4}, #{param5})
+   </insert>
+</mapper>

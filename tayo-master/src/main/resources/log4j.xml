@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
+		</layout>
+	</appender>
+	
+   <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
+      <!-- 로그 파일 저장 위치 설정(톰캣 실행시 cmd 를 관리자 모드로 해줘야 한다.)  -->
+      <param name="File" value="C:/logs/spring.log"/>
+	  <!-- 파일 생성 주기 -->	      
+      <param name="DatePattern" value=".yyyy-MM-dd-HH"/>
+       <layout class="org.apache.log4j.PatternLayout">
+       		<!-- 로그 표현 방식  -->
+       		<!-- 200-11-17 14:44:05,425 INFO[kr.co.gudi.controller.MainController]- 리스트 호출 -->
+           <param name="ConversionPattern" value="%d %p [%c] -%m%n" />
+       </layout>   
+   </appender>		
+	<!-- Application Loggers -->
+	<logger name="kr.co.tayo">
+		<level value="info" />
+	</logger>
+	
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.beans">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework.context">
+		<level value="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="info" />
+	</logger>
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</root>
+	
+</log4j:configuration>

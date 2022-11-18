@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.A_replylistDAO">
+
+	<select id="A_replylist" resultType="kr.co.tayo.dto.A_replylistDTO">		
+		select s.se_secret,b.bo_name,t.bo_num,r.re_num,r.re_coment,r.mem_id,r.re_date,t.num from total t 
+			inner join reply r on t.num = r.num 
+			inner join secret s on s.re_num=r.re_num
+			inner join boonryu b on b.bo_num=t.bo_num where r.mem_id =#{param1} ORDER BY re_num DESC;
+	</select>
+	
+	<select id="totalCount" resultType="int">
+      SELECT COUNT(r.re_num) FROM reply r
+         inner join total t on t.num = r.num 
+         inner join secret s on s.re_num=r.re_num
+         inner join boonryu b on b.bo_num=t.bo_num ORDER BY r.re_num DESC; 
+	</select>
+
+	<select id="A_replylistsearch" resultType="kr.co.tayo.dto.A_replylistDTO" parameterType="hashmap">
+		select s.se_secret,b.bo_name,t.bo_num,r.re_num,r.re_coment,r.mem_id,r.re_date from total t 
+			inner join reply r on t.num = r.num 
+			inner join secret s on s.re_num=r.re_num
+			inner join boonryu b on b.bo_num=t.bo_num 
+		where r.re_coment like concat('%',#{re_coment},'%') or t.mem_id like concat('%',#{mem_id},'%')
+	</select>
+	
+	<delete id="A_replylistdel"> 
+		DELETE FROM reply where mem_id=#{param1}
+	</delete>
+
+</mapper>

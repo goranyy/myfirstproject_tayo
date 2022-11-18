@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC   "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+<mapper namespace="kr.co.tayo.dao.Member_DAO">
+
+	<!-- 로그인 -->
+	<select id="login" resultType="String">
+		SELECT mem_id FROM member 
+			WHERE mem_id=#{param1} AND mem_pw=#{param2}
+	</select>
+	
+		<select id="login1" resultType="String">
+		SELECT mem_power FROM member 
+			WHERE mem_id=#{param1} AND mem_pw=#{param2}
+	</select>
+	
+	<!-- mbti check -->
+	<select id="mbti" resultType="String">
+		SELECT mem_mbti FROM MemberEvent WHERE mem_id=#{param1};
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="join">
+		INSERT INTO member(mem_id, mem_pw, mem_pnum, mem_email, mem_add, mem_detailAdd, mem_name, mem_age, mem_power, mem_bcnt)
+			VALUES(#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},0,0)
+	</insert>
+	
+	<insert id="join1">
+		INSERT INTO MemberEvent(mem_id, mem_mar, mem_child, mem_mbti, mem_fam)
+			VALUES(#{param1},0,0,0,0)
+	</insert>
+	
+	<!-- 회원가입-아이디 체크 -->
+	<select id="idCheck" resultType="String">
+		SELECT mem_id FROM member WHERE mem_id = #{param1}
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findId" resultType="String">
+		SELECT mem_id FROM member 
+			WHERE mem_name=#{param1} AND mem_email = #{param2} AND mem_pnum = #{param3}
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="update" parameterType="String"> <!-- parameterType이 안 먹음 ㅠㅠ -->
+		UPDATE member SET
+			mem_pw=#{param2}
+		WHERE mem_id=#{param1}
+	</update>
+	
+	<!-- 이벤트 페이지 -->
+	<update id="eventPage">
+		 update MemberEvent set mem_mar=#{param2}, mem_child=#{param3}, mem_mbti=#{param4}, mem_fam=#{param5} where mem_id=#{param1}
+	</update>
+	
+</mapper>
